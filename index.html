@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TP3 - API</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <script type="module" src="js/main.js" defer></script>
+  </head>
+  <body>
+    <form id="form">
+      <select name="regions" id="regions"></select>
+      <select name="depts" id="depts"></select>
+
+      <input type="submit" value="Afficher les communes" />
+    </form>
+    <table id="table">
+      <thead>
+        <tr>
+          <th>Commune</th>
+          <th>Population</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <button id="geoBtn">Donner position</button>
+  </body>
+</html>

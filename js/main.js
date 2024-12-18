@@ -9,7 +9,7 @@ const geoBtn = document.querySelector("#geoBtn");
 
 geoBtn.addEventListener("click", () => {
   if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(handleGeolocation);
+    navigator.geolocation.getCurrentPosition(handleGeolocation, handleError);
   } else {
     alert("La géolocalisation n'est pas supportée par votre navigateur.");
   }
@@ -17,25 +17,45 @@ geoBtn.addEventListener("click", () => {
 
 async function handleGeolocation(position) {
   const { latitude, longitude } = position.coords;
-  try {
-    const url = `https://geo.api.gouv.fr/communes?lat=${latitude}&lon=${longitude}&fields=code,nom,codesPostaux,surface,population,centre,contour&format=json`;
-    const communes = await fetchData(url);
+  const url = `https://geo.api.gouv.fr/communes?lat=${latitude}&lon=${longitude}&fields=code,nom,codesPostaux,surface,population,centre,contour&format=json`;
+  const cities = await fetchData(url);
 
-    if (communes.length === 0) {
-      alert("Aucune commune trouvée pour votre position.");
-      return;
-    }
-
-    const commune = communes[0]; // Supposons que la première commune est la bonne
-    displayCityInfo(commune);
-    displayCityOnMap(commune);
-  } catch (error) {
-    console.error(
-      "Erreur lors de la récupération des informations de la commune :",
-      error
-    );
-    alert("Impossible de récupérer les informations de votre ville.");
+  if (cities.length === 0) {
+    alert("Aucune commune trouvée pour votre position.");
+    return;
   }
+  const city = cities[0];
+  console.log(city);
+
+  displayCityInfo(city);
+}
+
+function handleError(error) {
+  switch (error.code) {
+    case error.PERMISSION_DENIED:
+      alert("Vous avez refusé la demande de géolocalisation.");
+      break;
+    case error.POSITION_UNAVAILABLE:
+      alert("La position n'est pas disponible.");
+      break;
+    case error.TIMEOUT:
+      alert("La demande de géolocalisation a expiré.");
+      break;
+    default:
+      alert("Une erreur inconnue est survenue.");
+      break;
+  }
+}
+
+function displayCityInfo(city) {
+  const cityInfo = `
+    <h2>${city.nom}</h2>
+    <p><strong>Code INSEE :</strong> ${city.code}</p>
+    <p><strong>Codes postaux :</strong> ${city.codesPostaux.join(", ")}</p>
+    <p><strong>Population :</strong> ${city.population}</p>
+    <p><strong>Surface :</strong> ${city.surface} m²</p>
+  `;
+  document.getElementById("cityInfo").innerHTML = cityInfo;
 }
 
 async function displayRegions() {
@@ -48,8 +68,6 @@ async function displayRegions() {
     populateSelect(depts, initialDepts, "code", "nom");
   }
 }
-
-function displayCityInfo(city) {}
 
 regions.addEventListener("change", async () => {
   const selected = regions.options[regions.selectedIndex];

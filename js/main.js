@@ -26,7 +26,6 @@ async function handleGeolocation(position) {
     return;
   }
   const city = cities[0];
-  console.log(city);
 
   displayCityInfo(city);
 }

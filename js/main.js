@@ -1,4 +1,5 @@
 import { fetchRegion, fetchDept, fetchCities } from "./api/api.js";
+import fetchData from "./api/fetch-data.js";
 import { populateSelect, populateTable } from "./ui.js";
 import { sortCities } from "./utils.js";
 
